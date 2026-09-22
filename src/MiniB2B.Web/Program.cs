@@ -1,7 +1,19 @@
+using MiniB2B.Business;
+using MiniB2B.Web.Grid;
+using System.Text.Json.Serialization;
+
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = builder.Configuration.GetConnectionString("MiniB2B")
+    ?? throw new InvalidOperationException("'MiniB2B' connection string bulunamadý.");
+
+builder.Services.AddBusiness(connectionString);
+builder.Services.AddGridRendering();
+
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
 var app = builder.Build();
 
@@ -24,6 +36,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
 
 app.Run();

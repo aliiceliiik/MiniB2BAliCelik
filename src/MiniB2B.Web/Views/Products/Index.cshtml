@@ -1,0 +1,70 @@
+﻿@model MiniB2B.Web.Models.ProductListViewModel
+@using MiniB2B.Web.Grid
+@inject GridCellRendererResolver Renderers
+
+@{
+    ViewData["Title"] = "Ürünler";
+}
+
+<h2 class="mb-3">Ürünler</h2>
+
+<form method="get" asp-action="Index" class="row g-2 mb-3">
+    <div class="col-sm-8 col-md-6">
+        <input type="text" name="SearchTerm" value="@Model.SearchTerm" class="form-control"
+               placeholder="Ürün adı, kodu, marka, üretici kodu..." />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Ara</button>
+    </div>
+</form>
+
+@if (Model.Products.TotalCount == 0)
+{
+    <div class="alert alert-info">Aramanıza uygun ürün bulunamadı.</div>
+}
+
+<div class="table-responsive">
+    <table class="table table-sm table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                @foreach (var column in Model.Columns)
+                {
+                    <th class="@GridCssHelper.GetCellClass(column)" style="width:@column.Width">
+                        @column.HeaderText
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model.Products.Items)
+            {
+                <tr>
+                    @foreach (var column in Model.Columns)
+                    {
+                        var value = PropertyValueAccessor.GetValue(product, column.FieldName);
+                        <td class="@GridCssHelper.GetCellClass(column)">
+                            @Renderers.Get(column.RenderType).Render(value)
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (Model.Products.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination pagination-sm">
+            @for (var i = 1; i <= Model.Products.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.Products.Page ? "active" : "")">
+                    <a class="page-link" asp-action="Index"
+                       asp-route-SearchTerm="@Model.SearchTerm"
+                       asp-route-PageSize="@Model.Products.PageSize"
+                       asp-route-Page="@i">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

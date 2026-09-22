@@ -3,6 +3,7 @@ using MiniB2B.Web.Grid;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using MiniB2B.Web.Auth;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,9 +18,12 @@ builder.Services.AddCookieAuth(builder.Environment);
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add(new AuthorizeFilter());
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
 })
     .AddJsonOptions(options =>
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+builder.Services.AddAntiforgery(options => options.HeaderName = "RequestVerificationToken");
 
 var app = builder.Build();
 await app.SeedAdminAsync();

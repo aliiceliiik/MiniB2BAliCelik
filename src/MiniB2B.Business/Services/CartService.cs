@@ -90,6 +90,11 @@ public class CartService : ICartService
         return ServiceResult<CartDto>.Success(await GetCartAsync(userId));
     }
 
+    public Task<int> GetItemCountAsync(int userId)
+    {
+        return _cartRepository.CountItemsAsync(userId);
+    }
+
     private static string? ValidateStock(ProductStockInfoDto? product, int requestedQuantity)
     {
         if (product is null || !product.IsActive)

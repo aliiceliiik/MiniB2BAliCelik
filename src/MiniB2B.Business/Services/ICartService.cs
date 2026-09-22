@@ -9,4 +9,5 @@ public interface ICartService
     Task<ServiceResult<CartDto>> AddItemAsync(int userId, AddToCartRequest request);
     Task<ServiceResult<CartDto>> UpdateItemAsync(int userId, int productId, int quantity);
     Task<ServiceResult<CartDto>> RemoveItemAsync(int userId, int productId);
+    Task<int> GetItemCountAsync(int userId);
 }

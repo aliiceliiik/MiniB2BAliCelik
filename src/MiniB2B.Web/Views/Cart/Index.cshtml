@@ -1,0 +1,75 @@
+﻿@model MiniB2B.Entities.Dtos.Cart.CartDto
+@using System.Globalization
+@{
+    ViewData["Title"] = "Sepetim";
+    var tr = new CultureInfo("tr-TR");
+}
+
+<h2 class="mb-3">Sepetim</h2>
+
+@if (Model.ItemCount == 0)
+{
+    <div class="alert alert-info">
+        Sepetiniz boş. <a asp-controller="Products" asp-action="Index">Ürünlere göz atın</a>.
+    </div>
+}
+else
+{
+    <div id="cart-page">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ürün</th>
+                        <th class="text-end">Birim Fiyat</th>
+                        <th style="width: 140px;">Adet</th>
+                        <th class="text-end">Toplam</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr data-product-id="@item.ProductId"
+                            data-product-name="@item.ProductName"
+                            data-available-stock="@item.AvailableStock">
+                            <td>
+                                <div class="fw-semibold">@item.ProductName</div>
+                                <div class="text-muted small">@item.ProductCode</div>
+                                <div class="text-danger small js-stock-warning @(item.HasSufficientStock ? "d-none" : "")">
+                                    Yeterli stok yok. Mevcut stok: <span class="js-available">@item.AvailableStock</span>
+                                </div>
+                            </td>
+                            <td class="text-end">@item.UnitPrice.ToString("C2", tr)</td>
+                            <td>
+                                <input type="number" class="form-control form-control-sm js-cart-qty"
+                                       min="1" value="@item.Quantity" />
+                            </td>
+                            <td class="text-end js-line-total">@item.LineTotal.ToString("C2", tr)</td>
+                            <td class="text-end">
+                                <button type="button" class="btn btn-sm btn-outline-danger js-remove">Sil</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-end align-items-center gap-3">
+            <div class="fs-5">
+                Sepet Toplamı: <strong id="cart-total">@Model.TotalAmount.ToString("C2", tr)</strong>
+            </div>
+            <button type="button" id="checkout-btn" class="btn btn-success" disabled="@(!Model.CanCheckout)">
+                Sipariş Oluştur
+            </button>
+        </div>
+
+        <div id="checkout-warning" class="text-danger text-end small mt-2 @(Model.CanCheckout ? "d-none" : "")">
+            Siparişi oluşturmak için stoğu yetersiz ürünlerin adetlerini düzenleyin.
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="~/js/cart-page.js" asp-append-version="true"></script>
+}

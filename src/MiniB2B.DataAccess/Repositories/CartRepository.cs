@@ -55,6 +55,11 @@ public class CartRepository : ICartRepository
             .ToListAsync();
     }
 
+    public Task<int> CountItemsAsync(int userId)
+    {
+        return _context.CartItems.CountAsync(i => i.Cart.UserId == userId);
+    }
+
     public void AddItem(CartItem item) => _context.CartItems.Add(item);
 
     public void RemoveItem(CartItem item) => _context.CartItems.Remove(item);

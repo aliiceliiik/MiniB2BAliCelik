@@ -1,6 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="request-verification-token" content="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - MiniB2B.Web</title>
@@ -10,6 +13,7 @@
     <link rel="stylesheet" href="~/MiniB2B.Web.styles.css" asp-append-version="true" />
 </head>
 <body>
+    <div id="toast-container" class="position-fixed top-0 end-0 p-3" style="z-index: 1080;"></div>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">

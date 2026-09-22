@@ -6,4 +6,5 @@ namespace MiniB2B.DataAccess.Repositories;
 public interface IProductRepository
 {
     Task<PagedResult<ProductListItemDto>> SearchAsync(ProductSearchRequest request);
+    Task<ProductStockInfoDto?> GetStockInfoAsync(int productId);
 }

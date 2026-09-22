@@ -55,6 +55,19 @@ public class ProductRepository : IProductRepository
             PageSize = request.PageSize
         };
     }
+    public Task<ProductStockInfoDto?> GetStockInfoAsync(int productId)
+    {
+        return _context.Products
+            .Where(p => p.Id == productId)
+            .Select(p => new ProductStockInfoDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                StockQuantity = p.StockQuantity,
+                IsActive = p.IsActive
+            })
+            .FirstOrDefaultAsync();
+    }
 
     private static IQueryable<Product> ApplySearch(IQueryable<Product> query, string term)
     {

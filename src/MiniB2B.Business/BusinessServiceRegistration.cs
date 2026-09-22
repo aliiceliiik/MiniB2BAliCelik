@@ -19,6 +19,7 @@ public static class BusinessServiceRegistration
         services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IAdminSeeder, AdminSeeder>();
+        services.AddScoped<ICartService, CartService>();
 
         return services;
     }

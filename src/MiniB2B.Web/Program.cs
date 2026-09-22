@@ -1,6 +1,8 @@
 using MiniB2B.Business;
 using MiniB2B.Web.Grid;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using MiniB2B.Web.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,9 +11,13 @@ var connectionString = builder.Configuration.GetConnectionString("MiniB2B")
 
 builder.Services.AddBusiness(connectionString);
 builder.Services.AddGridRendering();
+builder.Services.AddCookieAuth(builder.Environment);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews()
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add(new AuthorizeFilter());
+})
     .AddJsonOptions(options =>
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
@@ -28,6 +34,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

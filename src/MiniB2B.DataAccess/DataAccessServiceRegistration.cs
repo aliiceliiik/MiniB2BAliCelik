@@ -19,6 +19,7 @@ public static class DataAccessServiceRegistration
 
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IGridConfigRepository, GridConfigRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
 
         return services;
     }

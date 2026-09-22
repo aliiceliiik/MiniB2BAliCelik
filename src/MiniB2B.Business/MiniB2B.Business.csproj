@@ -1,6 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MiniB2B.DataAccess\MiniB2B.DataAccess.csproj" />
     <ProjectReference Include="..\MiniB2B.Entities\MiniB2B.Entities.csproj" />
   </ItemGroup>

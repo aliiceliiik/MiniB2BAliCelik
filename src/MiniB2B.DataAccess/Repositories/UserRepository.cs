@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MiniB2B.DataAccess.Context;
+using MiniB2B.Entities.Enums;
 using MiniB2B.Entities.Models;
 
 namespace MiniB2B.DataAccess.Repositories;
@@ -35,5 +36,9 @@ public class UserRepository : IUserRepository
     {
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
+    }
+    public Task<bool> AnyInRoleAsync(UserRole role)
+    {
+        return _context.Users.AnyAsync(u => u.Role == role);
     }
 }

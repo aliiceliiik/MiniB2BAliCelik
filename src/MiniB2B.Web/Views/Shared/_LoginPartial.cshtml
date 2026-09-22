@@ -5,7 +5,7 @@
             <span class="nav-link text-dark">Merhaba, @User.GetFullName()</span>
         </li>
         <li class="nav-item">
-            <form asp-controller="Account" asp-action="Logout" method="post">
+            <form asp-area="" asp-controller="Account" asp-action="Logout" method="post">
                 <button type="submit" class="nav-link btn btn-link text-dark">Çıkış</button>
             </form>
         </li>
@@ -13,10 +13,10 @@
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Giriş</a>
+            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Giriş</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Kayıt Ol</a>
+            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Kayıt Ol</a>
         </li>
     }
 </ul>

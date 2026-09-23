@@ -5,8 +5,9 @@ using MiniB2B.Web.Auth;
 using MiniB2B.Web.Grid;
 using MiniB2B.Web.Services;
 using System.Text.Json.Serialization;
-using MiniB2B.Web.Services;
 using MiniB2B.Web.Middleware;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,7 +55,14 @@ if (!app.Environment.IsDevelopment())
 
 app.UseStatusCodePagesWithReExecute("/Home/HttpError", "?code={0}");
 
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture(CultureInfo.InvariantCulture),
+    SupportedCultures = [CultureInfo.InvariantCulture],
+    SupportedUICultures = [CultureInfo.InvariantCulture]
+});
 app.UseHttpsRedirection();
+
 app.UseRouting();
 app.UseStaticFiles();
 

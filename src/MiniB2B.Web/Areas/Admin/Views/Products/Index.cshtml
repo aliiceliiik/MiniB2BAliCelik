@@ -1,0 +1,113 @@
+﻿@using MiniB2B.Web.Areas.Admin.Models
+@using MiniB2B.Web.Helpers
+@model AdminProductListViewModel
+@{
+    ViewData["Title"] = "Ürün Yönetimi";
+    var filter = Model.Filter;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Ürün Yönetimi</h2>
+    <a asp-action="Create" class="btn btn-success">+ Yeni Ürün</a>
+</div>
+
+@if (TempData["Success"] is string successMessage)
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+
+<form method="get" asp-action="Index" class="row g-2 mb-3">
+    <div class="col-md-5">
+        <input type="text" name="SearchTerm" value="@filter.SearchTerm" class="form-control"
+               placeholder="Kod, ad, marka, açıklama, özel kod..." />
+    </div>
+    <div class="col-md-3">
+        <select name="CategoryId" class="form-select">
+            <option value="">Tüm kategoriler</option>
+            @foreach (var category in Model.Categories)
+            {
+                <option value="@category.Id" selected="@(filter.CategoryId == category.Id)">@category.Name</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="IsActive" class="form-select">
+            <option value="">Tümü</option>
+            <option value="true" selected="@(filter.IsActive == true)">Aktif</option>
+            <option value="false" selected="@(filter.IsActive == false)">Pasif</option>
+        </select>
+    </div>
+    <div class="col-md-2 d-grid">
+        <button type="submit" class="btn btn-primary">Filtrele</button>
+    </div>
+</form>
+
+@if (Model.Products.TotalCount == 0)
+{
+    <div class="alert alert-info">Kriterlere uygun ürün bulunamadı.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-sm table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 60px;"></th>
+                    <th>Kod</th>
+                    <th>Ürün Adı</th>
+                    <th>Marka</th>
+                    <th>Kategori</th>
+                    <th class="text-end">Stok</th>
+                    <th class="text-end">Kritik</th>
+                    <th class="text-end">Fiyat</th>
+                    <th class="text-center">Durum</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model.Products.Items)
+                {
+                    <tr class="@(p.IsActive ? "" : "table-secondary text-muted")">
+                        <td>
+                            @if (p.ImageUrl is not null)
+                            {
+                                <img src="@p.ImageUrl" alt="" class="img-thumbnail grid-thumb" loading="lazy" />
+                            }
+                        </td>
+                        <td class="fw-semibold">@p.ProductCode</td>
+                        <td>@p.Name</td>
+                        <td>@p.Brand</td>
+                        <td>@p.CategoryName</td>
+                        <td class="text-end @(p.StockQuantity <= p.CriticalStockLevel ? "text-danger fw-semibold" : "")">
+                            @p.StockQuantity
+                        </td>
+                        <td class="text-end">@p.CriticalStockLevel</td>
+                        <td class="text-end">@DisplayFormat.Money(p.Price)</td>
+                        <td class="text-center">@(p.IsActive ? "Aktif" : "Pasif")</td>
+                        <td class="text-end">
+                            <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-outline-primary">Düzenle</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.Products.TotalPages > 1)
+    {
+        <nav>
+            <ul class="pagination pagination-sm">
+                @for (var i = 1; i <= Model.Products.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.Products.Page ? "active" : "")">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-SearchTerm="@filter.SearchTerm"
+                           asp-route-CategoryId="@filter.CategoryId"
+                           asp-route-IsActive="@filter.IsActive"
+                           asp-route-Page="@i">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+}

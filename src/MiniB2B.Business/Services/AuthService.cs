@@ -65,6 +65,14 @@ public class AuthService : IAuthService
 
         return ServiceResult<AuthenticatedUserDto>.Success(ToAuthenticatedUser(user));
     }
+    public async Task<bool> IsSessionValidAsync(int userId, string role)
+    {
+        var state = await _userRepository.GetAuthStateAsync(userId);
+
+        return state is not null
+            && state.IsActive
+            && state.Role.ToString() == role;
+    }
 
     private static AuthenticatedUserDto ToAuthenticatedUser(User user) => new()
     {

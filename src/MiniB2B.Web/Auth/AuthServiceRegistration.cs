@@ -29,6 +29,8 @@ public static class AuthServiceRegistration
 
                 options.Events.OnRedirectToAccessDenied = context =>
                     HandleRedirect(context.HttpContext, context.RedirectUri, StatusCodes.Status403Forbidden);
+
+                options.Events.OnValidatePrincipal = CookieValidator.ValidateAsync;
             });
 
         return services;

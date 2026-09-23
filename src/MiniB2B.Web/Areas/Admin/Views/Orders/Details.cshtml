@@ -1,0 +1,53 @@
+﻿@using MiniB2B.Entities.Dtos.Orders
+@using MiniB2B.Web.Helpers
+@model OrderDetailDto
+@{
+    ViewData["Title"] = $"Sipariş #{Model.OrderNumber}";
+}
+
+@if (TempData["Success"] is string successMessage)
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+@if (TempData["Error"] is string errorMessage)
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 class="mb-0">Sipariş #@Model.OrderNumber</h2>
+    <partial name="_OrderStatusBadge" model="Model.Status" />
+</div>
+
+<div class="text-muted mb-3">
+    <div>Müşteri: <strong>@Model.CustomerName</strong> (@Model.CustomerEmail)</div>
+    <div>Sipariş tarihi: @DisplayFormat.Date(Model.OrderDate)</div>
+</div>
+
+<partial name="_OrderItemsTable" model="Model" />
+
+@if (Model.Status == OrderStatus.Pending)
+{
+    <div class="d-flex gap-2 mb-3">
+        <form asp-action="ChangeStatus" asp-route-id="@Model.Id" method="post">
+            <input type="hidden" name="status" value="Approved" />
+            <button type="submit" class="btn btn-success"
+                    onclick="return confirm('Siparişi onaylamak istiyor musunuz?');">
+                Onayla
+            </button>
+        </form>
+        <form asp-action="ChangeStatus" asp-route-id="@Model.Id" method="post">
+            <input type="hidden" name="status" value="Rejected" />
+            <button type="submit" class="btn btn-danger"
+                    onclick="return confirm('Siparişi reddetmek istiyor musunuz? Ürünler stoğa iade edilecek.');">
+                Reddet
+            </button>
+        </form>
+    </div>
+}
+else
+{
+    <div class="alert alert-secondary">Bu sipariş sonuçlandırılmıştır; durumu tekrar değiştirilemez.</div>
+}
+
+<a asp-action="Index" class="btn btn-outline-secondary">Sipariş listesine dön</a>

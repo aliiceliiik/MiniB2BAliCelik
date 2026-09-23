@@ -17,36 +17,6 @@
 </div>
 <p class="text-muted">Sipariş tarihi: @DisplayFormat.Date(Model.OrderDate)</p>
 
-<div class="table-responsive">
-    <table class="table align-middle">
-        <thead class="table-light">
-            <tr>
-                <th>Ürün</th>
-                <th>Ürün Kodu</th>
-                <th class="text-center">Adet</th>
-                <th class="text-end">Birim Fiyat</th>
-                <th class="text-end">Toplam</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Items)
-            {
-                <tr>
-                    <td>@item.ProductName</td>
-                    <td>@item.ProductCode</td>
-                    <td class="text-center">@item.Quantity</td>
-                    <td class="text-end">@DisplayFormat.Money(item.UnitPrice)</td>
-                    <td class="text-end">@DisplayFormat.Money(item.TotalPrice)</td>
-                </tr>
-            }
-        </tbody>
-        <tfoot>
-            <tr>
-                <th colspan="4" class="text-end">Sipariş Toplamı</th>
-                <th class="text-end">@DisplayFormat.Money(Model.TotalAmount)</th>
-            </tr>
-        </tfoot>
-    </table>
-</div>
+<partial name="_OrderItemsTable" model="Model" />
 
 <a asp-action="Index" class="btn btn-outline-secondary">Siparişlerime dön</a>

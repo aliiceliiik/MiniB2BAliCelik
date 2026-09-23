@@ -22,6 +22,8 @@ public static class BusinessServiceRegistration
         services.AddScoped<ICartService, CartService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IAdminProductService, AdminProductService>();
+        services.AddScoped<IAdminUserService, AdminUserService>();
+        services.AddScoped<IAdminOrderService, AdminOrderService>();
 
         return services;
     }

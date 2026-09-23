@@ -1,9 +1,11 @@
-using MiniB2B.Business;
-using MiniB2B.Web.Grid;
-using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using MiniB2B.Web.Auth;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using MiniB2B.Business;
+using MiniB2B.Web.Auth;
+using MiniB2B.Web.Grid;
+using MiniB2B.Web.Services;
+using System.Text.Json.Serialization;
+using MiniB2B.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,7 @@ var connectionString = builder.Configuration.GetConnectionString("MiniB2B")
 builder.Services.AddBusiness(connectionString);
 builder.Services.AddGridRendering();
 builder.Services.AddCookieAuth(builder.Environment);
+builder.Services.AddSingleton<IImageStorage, LocalImageStorage>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews(options =>
@@ -38,6 +41,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();

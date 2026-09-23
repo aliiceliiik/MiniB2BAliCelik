@@ -1,0 +1,97 @@
+﻿@using MiniB2B.Web.Helpers
+@model PagedResult<AdminUserListItemDto>
+@{
+    ViewData["Title"] = "Kullanıcı Yönetimi";
+    var filter = (AdminUserSearchRequest)ViewData["Filter"]!;
+}
+
+<h2 class="mb-3">Kullanıcı Yönetimi</h2>
+
+@if (TempData["Success"] is string successMessage)
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+
+<form method="get" asp-action="Index" class="row g-2 mb-3">
+    <div class="col-md-5">
+        <input type="text" name="SearchTerm" value="@filter.SearchTerm" class="form-control"
+               placeholder="Ad soyad, kullanıcı adı, e-posta, telefon..." />
+    </div>
+    <div class="col-md-3">
+        <select name="Role" class="form-select">
+            <option value="">Tüm roller</option>
+            <option value="Customer" selected="@(filter.Role == UserRole.Customer)">Müşteri</option>
+            <option value="Admin" selected="@(filter.Role == UserRole.Admin)">Yönetici</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="IsActive" class="form-select">
+            <option value="">Tümü</option>
+            <option value="true" selected="@(filter.IsActive == true)">Aktif</option>
+            <option value="false" selected="@(filter.IsActive == false)">Pasif</option>
+        </select>
+    </div>
+    <div class="col-md-2 d-grid">
+        <button type="submit" class="btn btn-primary">Filtrele</button>
+    </div>
+</form>
+@if (Model.TotalCount == 0)
+{
+    <div class="alert alert-info">Kriterlere uygun kullanıcı bulunamadı.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-sm table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Ad Soyad</th>
+                    <th>Kullanıcı Adı</th>
+                    <th>E-posta</th>
+                    <th>Telefon</th>
+                    <th>Rol</th>
+                    <th class="text-center">Sipariş</th>
+                    <th>Kayıt Tarihi</th>
+                    <th class="text-center">Durum</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model.Items)
+                {
+                    <tr class="@(u.IsActive ? "" : "table-secondary text-muted")">
+                        <td class="fw-semibold">@u.FullName</td>
+                        <td>@u.UserName</td>
+                        <td>@u.Email</td>
+                        <td>@u.Phone</td>
+                        <td>@(u.Role == UserRole.Admin ? "Yönetici" : "Müşteri")</td>
+                        <td class="text-center">@u.OrderCount</td>
+                        <td>@DisplayFormat.Date(u.CreatedAt)</td>
+                        <td class="text-center">@(u.IsActive ? "Aktif" : "Pasif")</td>
+                        <td class="text-end">
+                            <a asp-action="Edit" asp-route-id="@u.Id" class="btn btn-sm btn-outline-primary">Görüntüle / Düzenle</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav>
+            <ul class="pagination pagination-sm">
+                @for (var i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.Page ? "active" : "")">
+                        <a class="page-link" asp-action="Index"
+                           asp-route-SearchTerm="@filter.SearchTerm"
+                           asp-route-Role="@filter.Role"
+                           asp-route-IsActive="@filter.IsActive"
+                           asp-route-Page="@i">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+}

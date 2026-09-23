@@ -7,3 +7,14 @@
     Hoş geldin, @User.GetFullName(). Ürün, kullanıcı ve sipariş yönetimi ekranları
     sonraki aşamalarda buraya eklenecek.
 </p>
+<div class="list-group mt-3" style="max-width: 400px;">
+    <a asp-controller="Products" asp-action="Index" class="list-group-item list-group-item-action">
+        Ürün Yönetimi
+    </a>
+</div>
+<a asp-controller="Users" asp-action="Index" class="list-group-item list-group-item-action">
+    Kullanıcı Yönetimi
+</a>
+<a asp-controller="Orders" asp-action="Index" class="list-group-item list-group-item-action">
+    Sipariş Yönetimi
+</a>

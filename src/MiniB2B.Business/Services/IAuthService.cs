@@ -7,4 +7,5 @@ public interface IAuthService
 {
     Task<ServiceResult<AuthenticatedUserDto>> RegisterAsync(RegisterRequest request);
     Task<ServiceResult<AuthenticatedUserDto>> LoginAsync(LoginRequest request);
+    Task<bool> IsSessionValidAsync(int userId, string role);
 }

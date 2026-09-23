@@ -77,7 +77,7 @@ public class ProductsController : AdminControllerBase
 
         if (ModelState.IsValid && model.ImageFile is not null)
         {
-            var upload = await _imageStorage.SaveProductImageAsync(model.ImageFile);
+            var upload = await _imageStorage.SaveAsync(model.ImageFile, "products");
 
             if (upload.IsSuccess)
                 model.Product.ImageUrl = upload.Data;

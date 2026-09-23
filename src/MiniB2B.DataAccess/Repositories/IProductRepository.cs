@@ -15,4 +15,6 @@ public interface IProductRepository
     Task<bool> ProductCodeExistsAsync(string productCode, int? excludeId);
     Task AddAsync(Product product);
     Task SaveChangesAsync();
+    Task<ProductDetailDto?> GetDetailAsync(int id);
+
 }

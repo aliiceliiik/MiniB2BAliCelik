@@ -10,17 +10,25 @@
 
 <form method="get" asp-action="Index" class="row g-2 mb-3">
     <div class="col-sm-8 col-md-6">
-        <input type="text" name="SearchTerm" value="@Model.SearchTerm" class="form-control"
+        <input type="text"
+               name="SearchTerm"
+               value="@Model.SearchTerm"
+               class="form-control"
                placeholder="Ürün adı, kodu, marka, üretici kodu..." />
     </div>
+
     <div class="col-auto">
-        <button type="submit" class="btn btn-primary">Ara</button>
+        <button type="submit" class="btn btn-primary">
+            Ara
+        </button>
     </div>
 </form>
 
 @if (Model.Products.TotalCount == 0)
 {
-    <div class="alert alert-info">Aramanıza uygun ürün bulunamadı.</div>
+    <div class="alert alert-info">
+        Aramanıza uygun ürün bulunamadı.
+    </div>
 }
 
 <div class="table-responsive">
@@ -29,19 +37,28 @@
             <tr>
                 @foreach (var column in Model.Columns)
                 {
-                    <th class="@GridCssHelper.GetCellClass(column)" style="width:@column.Width">
+                    <th class="@GridCssHelper.GetCellClass(column)"
+                        style="width:@column.Width">
                         @column.HeaderText
                     </th>
                 }
             </tr>
         </thead>
+
         <tbody>
             @foreach (var product in Model.Products.Items)
             {
-                <tr>
+                <tr data-product-id="@product.Id"
+                    class="js-product-row"
+                    style="cursor: pointer;">
+
                     @foreach (var column in Model.Columns)
                     {
-                        var value = PropertyValueAccessor.GetValue(product, column.FieldName);
+                        var value = PropertyValueAccessor.GetValue(
+                        product,
+                        column.FieldName
+                        );
+
                         <td class="@GridCssHelper.GetCellClass(column)">
                             @Renderers.Get(column.RenderType).Render(value)
                         </td>
@@ -52,6 +69,32 @@
     </table>
 </div>
 
+<div class="modal fade" id="productModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="productModalTitle">
+                    Ürün Detayı
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Kapat">
+                </button>
+            </div>
+
+            <div class="modal-body" id="productModalBody">
+                <div class="text-center text-muted py-4">
+                    Yükleniyor...
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 @if (Model.Products.TotalPages > 1)
 {
     <nav>
@@ -59,10 +102,15 @@
             @for (var i = 1; i <= Model.Products.TotalPages; i++)
             {
                 <li class="page-item @(i == Model.Products.Page ? "active" : "")">
-                    <a class="page-link" asp-action="Index"
+
+                    <a class="page-link"
+                       asp-action="Index"
                        asp-route-SearchTerm="@Model.SearchTerm"
                        asp-route-PageSize="@Model.Products.PageSize"
-                       asp-route-Page="@i">@i</a>
+                       asp-route-Page="@i">
+                        @i
+                    </a>
+
                 </li>
             }
         </ul>

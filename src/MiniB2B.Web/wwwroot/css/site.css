@@ -34,3 +34,7 @@ body {
     height: 50px;
     object-fit: contain;
 }
+.slider-image {
+    height: 320px;
+    object-fit: cover;
+}

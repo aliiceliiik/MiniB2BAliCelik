@@ -24,6 +24,8 @@ public static class BusinessServiceRegistration
         services.AddScoped<IAdminProductService, AdminProductService>();
         services.AddScoped<IAdminUserService, AdminUserService>();
         services.AddScoped<IAdminOrderService, AdminOrderService>();
+        services.AddScoped<ISliderService, SliderService>();
+
 
         return services;
     }

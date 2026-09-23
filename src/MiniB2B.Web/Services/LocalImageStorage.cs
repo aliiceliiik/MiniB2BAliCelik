@@ -15,7 +15,7 @@ public class LocalImageStorage : IImageStorage
         _environment = environment;
     }
 
-    public async Task<ServiceResult<string>> SaveProductImageAsync(IFormFile file)
+    public async Task<ServiceResult<string>> SaveAsync(IFormFile file, string folderName)
     {
         if (file.Length == 0)
             return ServiceResult<string>.Failure("Boş bir dosya yüklenemez.");
@@ -28,7 +28,7 @@ public class LocalImageStorage : IImageStorage
         if (!AllowedExtensions.Contains(extension) || !await HasImageSignatureAsync(file))
             return ServiceResult<string>.Failure("Sadece JPG, PNG veya WEBP formatında resim yüklenebilir.");
 
-        var folder = Path.Combine(_environment.WebRootPath, "uploads", "products");
+        var folder = Path.Combine(_environment.WebRootPath, "uploads", folderName);
         Directory.CreateDirectory(folder);
 
         var fileName = $"{Guid.NewGuid():N}{extension.ToLowerInvariant()}";
@@ -37,7 +37,7 @@ public class LocalImageStorage : IImageStorage
         await using var output = new FileStream(fullPath, FileMode.CreateNew);
         await file.CopyToAsync(output);
 
-        return ServiceResult<string>.Success($"/uploads/products/{fileName}");
+        return ServiceResult<string>.Success($"/uploads/{folderName}/{fileName}");
     }
 
     private static async Task<bool> HasImageSignatureAsync(IFormFile file)

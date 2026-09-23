@@ -21,4 +21,11 @@ public class ProductsApiController : ControllerBase
         var result = await _productService.SearchAsync(request);
         return Ok(result);
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> Detail(int id)
+    {
+        var product = await _productService.GetDetailAsync(id);
+        return product is null ? NotFound() : Ok(product);
+    }
 }

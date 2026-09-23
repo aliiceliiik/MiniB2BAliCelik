@@ -157,6 +157,30 @@ public class ProductRepository : IProductRepository
 
     public Task SaveChangesAsync() => _context.SaveChangesAsync();
 
+    public Task<ProductDetailDto?> GetDetailAsync(int id)
+    {
+        return _context.Products
+            .Where(p => p.Id == id && p.IsActive)
+            .Select(p => new ProductDetailDto
+            {
+                Id = p.Id,
+                ProductCode = p.ProductCode,
+                Name = p.Name,
+                Description = p.Description,
+                Brand = p.Brand,
+                ManufacturerCode = p.ManufacturerCode,
+                SpecialCode1 = p.SpecialCode1,
+                SpecialCode2 = p.SpecialCode2,
+                ImageUrl = p.ImageUrl,
+                CategoryName = p.Category.Name,
+                Price = p.Price,
+                StockStatus = p.StockQuantity <= 0 ? StockStatus.OutOfStock
+                            : p.StockQuantity <= p.CriticalStockLevel ? StockStatus.Critical
+                            : StockStatus.Available
+            })
+            .FirstOrDefaultAsync();
+    }
+
     private static IQueryable<Product> ApplySearch(IQueryable<Product> query, string term)
     {
         return query.Where(p =>

@@ -1,25 +1,28 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MiniB2B.Business.Services;
 using MiniB2B.Web.Models;
 using System.Diagnostics;
-using Microsoft.AspNetCore.Authorization;
+using MiniB2B.Business.Services;
 
 namespace MiniB2B.Web.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly ISliderService _sliderService;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, ISliderService sliderService)
     {
         _logger = logger;
+        _sliderService = sliderService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        return View(await _sliderService.GetActiveAsync());
     }
-
     public IActionResult Privacy()
     {
         return View();

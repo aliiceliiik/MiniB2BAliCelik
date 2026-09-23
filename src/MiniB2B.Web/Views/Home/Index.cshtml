@@ -1,8 +1,57 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IReadOnlyList<MiniB2B.Entities.Dtos.Sliders.SliderDto>
+@{
+    ViewData["Title"] = "Ana Sayfa";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@if (Model.Count > 0)
+{
+    <div id="homeSlider" class="carousel slide mb-4" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                <button type="button" data-bs-target="#homeSlider" data-bs-slide-to="@i"
+                        class="@(i == 0 ? "active" : "")" aria-label="Slayt @(i + 1)"></button>
+            }
+        </div>
+
+        <div class="carousel-inner rounded">
+            @for (var i = 0; i < Model.Count; i++)
+            {
+                var slide = Model[i];
+                <div class="carousel-item @(i == 0 ? "active" : "")">
+                    @if (slide.LinkUrl is not null)
+                    {
+                        <a href="@slide.LinkUrl">
+                            <img src="@slide.ImageUrl" class="d-block w-100 slider-image" alt="@slide.Title" />
+                        </a>
+                    }
+                    else
+                    {
+                        <img src="@slide.ImageUrl" class="d-block w-100 slider-image" alt="@slide.Title" />
+                    }
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5 class="bg-dark bg-opacity-50 d-inline-block px-3 py-1 rounded">@slide.Title</h5>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (Model.Count > 1)
+        {
+            <button class="carousel-control-prev" type="button" data-bs-target="#homeSlider" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+                <span class="visually-hidden">Önceki</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#homeSlider" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+                <span class="visually-hidden">Sonraki</span>
+            </button>
+        }
+    </div>
+}
+
+<div class="text-center py-4">
+    <h1 class="h3">Hoş geldiniz, @User.GetFullName()</h1>
+    <p class="text-muted">B2B ürün kataloğunu inceleyip doğrudan sipariş verebilirsiniz.</p>
+    <a asp-controller="Products" asp-action="Index" class="btn btn-primary btn-lg">Ürünleri İncele</a>
 </div>

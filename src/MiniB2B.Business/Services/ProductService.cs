@@ -24,4 +24,6 @@ public class ProductService : IProductService
 
         return _productRepository.SearchAsync(request);
     }
+
+    public Task<ProductDetailDto?> GetDetailAsync(int id) => _productRepository.GetDetailAsync(id);
 }

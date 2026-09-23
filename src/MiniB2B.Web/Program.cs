@@ -6,6 +6,7 @@ using MiniB2B.Web.Grid;
 using MiniB2B.Web.Services;
 using System.Text.Json.Serialization;
 using MiniB2B.Web.Services;
+using MiniB2B.Web.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,18 @@ builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add(new AuthorizeFilter());
     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+
+    var messages = options.ModelBindingMessageProvider;
+    messages.SetValueMustNotBeNullAccessor(_ => "Bu alan zorunludur.");
+    messages.SetMissingBindRequiredValueAccessor(field => $"{field} alaný gönderilmedi.");
+    messages.SetAttemptedValueIsInvalidAccessor((value, field) => $"'{value}' deðeri {field} alaný için geçerli deðil.");
+    messages.SetValueIsInvalidAccessor(value => $"'{value}' deðeri geçerli deðil.");
+    messages.SetNonPropertyAttemptedValueIsInvalidAccessor(value => $"'{value}' deðeri geçerli deðil.");
+    messages.SetUnknownValueIsInvalidAccessor(field => $"{field} alanýna geçersiz bir deðer girildi.");
+    messages.SetNonPropertyUnknownValueIsInvalidAccessor(() => "Geçersiz bir deðer girildi.");
+    messages.SetMissingKeyOrValueAccessor(() => "Bu alan zorunludur.");
+    messages.SetNonPropertyValueMustBeANumberAccessor(() => "Bu alana sayý girilmelidir.");
+    messages.SetValueMustBeANumberAccessor(field => $"{field} alanýna sayý girilmelidir.");
 })
     .AddJsonOptions(options =>
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
@@ -32,12 +45,14 @@ var app = builder.Build();
 await app.SeedAdminAsync();
 
 // Configure the HTTP request pipeline.
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseStatusCodePagesWithReExecute("/Home/HttpError", "?code={0}");
 
 app.UseHttpsRedirection();
 app.UseRouting();

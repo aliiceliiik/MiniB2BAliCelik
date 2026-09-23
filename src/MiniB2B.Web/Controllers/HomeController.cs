@@ -32,6 +32,23 @@ public class HomeController : Controller
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        return View();
+    }
+
+    [AllowAnonymous]
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult HttpError(int code)
+    {
+        ViewData["Code"] = code;
+
+        ViewData["Message"] = code switch
+        {
+            404 => "Aradýðýnýz sayfa bulunamadý.",
+            403 => "Bu sayfaya eriþim yetkiniz bulunmuyor.",
+            400 => "Geçersiz bir istek gönderildi.",
+            _ => "Ýsteðiniz iþlenirken bir sorun oluþtu."
+        };
+
+        return View("HttpError");
     }
 }

@@ -4,6 +4,8 @@ using MiniB2B.Entities.Dtos.Auth;
 using MiniB2B.Entities.Dtos.Common;
 using MiniB2B.Entities.Enums;
 using MiniB2B.Entities.Models;
+using Microsoft.EntityFrameworkCore;
+using MiniB2B.Business.Common;
 
 namespace MiniB2B.Business.Services;
 
@@ -43,7 +45,14 @@ public class AuthService : IAuthService
 
         user.PasswordHash = _passwordHasher.HashPassword(user, request.Password);
 
-        await _userRepository.AddAsync(user);
+        try
+        {
+            await _userRepository.AddAsync(user);
+        }
+        catch (DbUpdateException)
+        {
+            throw new BusinessException("Bu e-posta veya kullanıcı adı kayıt sırasında başka bir kullanıcı tarafından alındı. Lütfen tekrar deneyin.");
+        }
 
         return ServiceResult<AuthenticatedUserDto>.Success(ToAuthenticatedUser(user));
     }

@@ -7,4 +7,5 @@ public interface IProductRepository
 {
     Task<PagedResult<ProductListItemDto>> SearchAsync(ProductSearchRequest request);
     Task<ProductStockInfoDto?> GetStockInfoAsync(int productId);
+    Task<bool> TryDecreaseStockAsync(int productId, int quantity);
 }

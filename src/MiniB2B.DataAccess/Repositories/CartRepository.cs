@@ -60,6 +60,12 @@ public class CartRepository : ICartRepository
         return _context.CartItems.CountAsync(i => i.Cart.UserId == userId);
     }
 
+    public Task<int> ClearAsync(int userId)
+    {
+        return _context.CartItems
+            .Where(i => i.Cart.UserId == userId)
+            .ExecuteDeleteAsync();
+    }
     public void AddItem(CartItem item) => _context.CartItems.Add(item);
 
     public void RemoveItem(CartItem item) => _context.CartItems.Remove(item);

@@ -13,4 +13,5 @@ public interface ICartRepository
     Task SaveChangesAsync();
     Task<IReadOnlyList<CartItemDto>> GetItemsAsync(int userId);
     Task<int> CountItemsAsync(int userId);
+    Task<int> ClearAsync(int userId);
 }

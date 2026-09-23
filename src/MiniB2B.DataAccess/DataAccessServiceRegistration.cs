@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using MiniB2B.DataAccess.Context;
 using MiniB2B.DataAccess.Repositories;
+using MiniB2B.DataAccess.Transactions;
 
 
 namespace MiniB2B.DataAccess;
@@ -21,6 +22,8 @@ public static class DataAccessServiceRegistration
         services.AddScoped<IGridConfigRepository, GridConfigRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ICartRepository, CartRepository>();
+        services.AddScoped<ITransactionManager, TransactionManager>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
 
         return services;
     }

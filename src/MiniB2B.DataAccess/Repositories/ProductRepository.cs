@@ -68,6 +68,16 @@ public class ProductRepository : IProductRepository
             })
             .FirstOrDefaultAsync();
     }
+    public async Task<bool> TryDecreaseStockAsync(int productId, int quantity)
+    {
+        var affectedRows = await _context.Products
+            .Where(p => p.Id == productId && p.IsActive && p.StockQuantity >= quantity)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(p => p.StockQuantity, p => p.StockQuantity - quantity)
+                .SetProperty(p => p.UpdatedAt, DateTime.UtcNow));
+
+        return affectedRows == 1;
+    }
 
     private static IQueryable<Product> ApplySearch(IQueryable<Product> query, string term)
     {

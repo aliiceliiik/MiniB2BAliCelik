@@ -20,6 +20,7 @@ public static class BusinessServiceRegistration
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IAdminSeeder, AdminSeeder>();
         services.AddScoped<ICartService, CartService>();
+        services.AddScoped<IOrderService, OrderService>();
 
         return services;
     }

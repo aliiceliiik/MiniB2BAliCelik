@@ -18,10 +18,25 @@
             row.querySelector('.js-stock-warning').classList.toggle('d-none', item.hasSufficientStock);
         }
 
-        document.getElementById('cart-total').textContent = App.formatCurrency(cart.totalAmount);
+        document.getElementById('cart-total').textContent =
+            App.formatCurrency(cart.totalAmount);
+
         document.getElementById('checkout-btn').disabled = !cart.canCheckout;
-        document.getElementById('checkout-warning').classList.toggle('d-none', cart.canCheckout);
+
+        document.getElementById('checkout-warning').classList.toggle(
+            'd-none',
+            cart.canCheckout
+        );
+
         App.updateCartBadge(cart.itemCount);
+    }
+
+    async function refreshCart() {
+        try {
+            applyCart(await App.api('/api/cart'));
+        } catch {
+            window.location.reload();
+        }
     }
 
     page.addEventListener('change', async (event) => {
@@ -39,13 +54,22 @@
         }
 
         if (quantity > availableStock) {
-            App.toast(`${row.dataset.productName} için yeterli stok bulunmamaktadır. Mevcut stok: ${availableStock}.`, 'warning');
+            App.toast(
+                `${row.dataset.productName} için yeterli stok bulunmamaktadır. Mevcut stok: ${availableStock}.`,
+                'warning'
+            );
+
             input.value = input.defaultValue;
             return;
         }
 
         try {
-            const cart = await App.api(`/api/cart/items/${row.dataset.productId}`, 'PUT', { quantity });
+            const cart = await App.api(
+                `/api/cart/items/${row.dataset.productId}`,
+                'PUT',
+                { quantity }
+            );
+
             input.defaultValue = quantity;
             applyCart(cart);
         } catch (error) {
@@ -53,22 +77,43 @@
             input.value = input.defaultValue;
         }
     });
+
+    page.addEventListener('click', async (event) => {
+        const button = event.target.closest('.js-remove');
+        if (!button) return;
+
+        if (!confirm('Ürünü sepetten çıkarmak istiyor musunuz?')) return;
+
+        const row = button.closest('tr');
+
+        try {
+            const cart = await App.api(
+                `/api/cart/items/${row.dataset.productId}`,
+                'DELETE'
+            );
+
+            row.remove();
+            applyCart(cart);
+
+            App.toast('Ürün sepetten çıkarıldı.');
+        } catch (error) {
+            App.toast(error.message, 'danger');
+        }
+    });
+
+    document.getElementById('checkout-btn').addEventListener('click', async (event) => {
+        const button = event.currentTarget;
+
+        if (!confirm('Siparişinizi oluşturmak istiyor musunuz?')) return;
+
+        button.disabled = true;
+
+        try {
+            const order = await App.api('/api/orders', 'POST');
+            window.location.href = `/Orders/Details/${order.orderId}?created=true`;
+        } catch (error) {
+            App.toast(error.message, 'danger');
+            await refreshCart();
+        }
+    });
 })();
-
-page.addEventListener('click', async (event) => {
-    const button = event.target.closest('.js-remove');
-    if (!button) return;
-
-    if (!confirm('Ürünü sepetten çıkarmak istiyor musunuz?')) return;
-
-    const row = button.closest('tr');
-
-    try {
-        const cart = await App.api(`/api/cart/items/${row.dataset.productId}`, 'DELETE');
-        row.remove();
-        applyCart(cart);
-        App.toast('Ürün sepetten çıkarıldı.');
-    } catch (error) {
-        App.toast(error.message, 'danger');
-    }
-});

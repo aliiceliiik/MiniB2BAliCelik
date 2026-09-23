@@ -33,6 +33,9 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Products" asp-action="Index">Ürünler</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">Siparişlerim</a>
+                        </li>
                         @if (User.IsInRole(nameof(UserRole.Admin)))
                         {
                             <li class="nav-item">

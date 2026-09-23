@@ -6,4 +6,6 @@ namespace MiniB2B.Business.Services;
 public interface IOrderService
 {
     Task<ServiceResult<OrderCreatedDto>> CreateOrderAsync(int userId);
+    Task<PagedResult<OrderListItemDto>> GetUserOrdersAsync(int userId, int page);
+    Task<OrderDetailDto?> GetUserOrderDetailAsync(int userId, int orderId);
 }

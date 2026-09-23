@@ -14,6 +14,7 @@ public class OrderService : IOrderService
     private readonly ICartRepository _cartRepository;
     private readonly IProductRepository _productRepository;
     private readonly IOrderRepository _orderRepository;
+    private const int OrdersPageSize = 10;
 
     public OrderService(
         ITransactionManager transactionManager,
@@ -88,5 +89,15 @@ public class OrderService : IOrderService
             OrderNumber = order.OrderNumber,
             TotalAmount = order.TotalAmount
         });
+    }
+
+    public Task<PagedResult<OrderListItemDto>> GetUserOrdersAsync(int userId, int page)
+    {
+        return _orderRepository.GetOrdersAsync(userId, Math.Max(1, page), OrdersPageSize);
+    }
+
+    public Task<OrderDetailDto?> GetUserOrderDetailAsync(int userId, int orderId)
+    {
+        return _orderRepository.GetOrderDetailAsync(orderId, userId);
     }
 }

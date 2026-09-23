@@ -1,0 +1,11 @@
+﻿@model OrderStatus
+@{
+    var (text, cssClass) = Model switch
+    {
+        OrderStatus.Approved => ("Onaylandı", "bg-success"),
+        OrderStatus.Rejected => ("Reddedildi", "bg-danger"),
+        _ => ("Beklemede", "bg-secondary")
+    };
+}
+
+<span class="badge @cssClass">@text</span>

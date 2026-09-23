@@ -24,6 +24,7 @@ public static class DataAccessServiceRegistration
         services.AddScoped<ICartRepository, CartRepository>();
         services.AddScoped<ITransactionManager, TransactionManager>();
         services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
 
         return services;
     }

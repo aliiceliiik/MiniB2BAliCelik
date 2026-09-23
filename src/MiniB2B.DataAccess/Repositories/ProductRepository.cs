@@ -4,6 +4,7 @@ using MiniB2B.Entities.Dtos.Common;
 using MiniB2B.Entities.Dtos.Products;
 using MiniB2B.Entities.Enums;
 using MiniB2B.Entities.Models;
+using MiniB2B.DataAccess.Extensions;
 
 namespace MiniB2B.DataAccess.Repositories;
 
@@ -78,6 +79,83 @@ public class ProductRepository : IProductRepository
 
         return affectedRows == 1;
     }
+
+    public Task<PagedResult<AdminProductListItemDto>> SearchForAdminAsync(AdminProductSearchRequest request)
+    {
+        IQueryable<Product> query = _context.Products;
+
+        if (request.IsActive.HasValue)
+            query = query.Where(p => p.IsActive == request.IsActive.Value);
+
+        if (request.CategoryId.HasValue)
+            query = query.Where(p => p.CategoryId == request.CategoryId.Value);
+
+        if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            query = ApplySearch(query, request.SearchTerm);
+
+        return query
+            .OrderBy(p => p.ProductCode)
+            .Select(p => new AdminProductListItemDto
+            {
+                Id = p.Id,
+                ImageUrl = p.ImageUrl,
+                ProductCode = p.ProductCode,
+                Name = p.Name,
+                Brand = p.Brand,
+                CategoryName = p.Category.Name,
+                StockQuantity = p.StockQuantity,
+                CriticalStockLevel = p.CriticalStockLevel,
+                Price = p.Price,
+                IsActive = p.IsActive
+            })
+            .ToPagedResultAsync(request.Page, request.PageSize);
+    }
+    public Task<ProductFormDto?> GetFormAsync(int id)
+    {
+        return _context.Products
+            .Where(p => p.Id == id)
+            .Select(p => new ProductFormDto
+            {
+                Id = p.Id,
+                CategoryId = p.CategoryId,
+                ProductCode = p.ProductCode,
+                Name = p.Name,
+                Description = p.Description,
+                Brand = p.Brand,
+                ManufacturerCode = p.ManufacturerCode,
+                SpecialCode1 = p.SpecialCode1,
+                SpecialCode2 = p.SpecialCode2,
+                ImageUrl = p.ImageUrl,
+                StockQuantity = p.StockQuantity,
+                CriticalStockLevel = p.CriticalStockLevel,
+                Price = p.Price,
+                IsActive = p.IsActive
+            })
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<Product?> GetByIdAsync(int id)
+    {
+        return await _context.Products.FindAsync(id);
+    }
+
+    public Task<bool> ProductCodeExistsAsync(string productCode, int? excludeId)
+    {
+        var query = _context.Products.Where(p => p.ProductCode == productCode);
+
+        if (excludeId.HasValue)
+            query = query.Where(p => p.Id != excludeId.Value);
+
+        return query.AnyAsync();
+    }
+
+    public async Task AddAsync(Product product)
+    {
+        _context.Products.Add(product);
+        await _context.SaveChangesAsync();
+    }
+
+    public Task SaveChangesAsync() => _context.SaveChangesAsync();
 
     private static IQueryable<Product> ApplySearch(IQueryable<Product> query, string term)
     {
